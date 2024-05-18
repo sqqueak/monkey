@@ -2,7 +2,7 @@ package lexer
 
 import (
 	"testing"
-	"github.com/monkey/token"
+	"github.com/sqqueak/monkey/token"
 )
 
 // Tests tokens parsed from input against expected tokens

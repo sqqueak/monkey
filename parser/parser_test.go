@@ -2,8 +2,8 @@ package parser
 
 import (
 	"testing"
-	"github.com/monkey/ast"
-	"github.com/monkey/lexer"
+	"github.com/sqqueak/monkey/ast"
+	"github.com/sqqueak/monkey/lexer"
 )
 
 func TestLetStatements(t *testing.T) {

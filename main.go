@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/user"
-	"github.com/monkey/repl"
+	"github.com/sqqueak/monkey/repl"
 )
 
 func main() {

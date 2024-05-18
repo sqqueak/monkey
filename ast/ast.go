@@ -1,6 +1,6 @@
 package ast
 
-import "github.com/monkey/token"
+import "github.com/sqqueak/monkey/token"
 
 type Node interface {
 	TokenLiteral() string
