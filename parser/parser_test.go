@@ -4,6 +4,7 @@ import (
 	"testing"
 	"github.com/sqqueak/monkey/ast"
 	"github.com/sqqueak/monkey/lexer"
+	"fmt"
 )
 
 func TestLetStatements(t *testing.T) {
@@ -129,6 +130,100 @@ func TestIdentifierExpression(t *testing.T) {
 		t.Errorf("ident.TokenLiteral not %s. got=%s", "foobar",
 		ident.TokenLiteral())
 	}
+}
+
+func TestIntegerLiteralExpression(t *testing.T) {
+	input := "5;"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 1 { // checking for 1 single statement
+		t.Fatalf("program has not enough statements. got=%d",
+			len(program.Statements))
+	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok { // checking statement is an expression
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
+			program.Statements[0])
+	}
+
+	literal, ok := stmt.Expression.(*ast.IntegerLiteral)
+	if !ok { // checking if the single token is an integer literal
+		t.Fatalf("exp not *ast.IntegerLiteral. got=%T", stmt.Expression)
+	}
+	if literal.Value != 5 { // checking the value of the intlit
+		t.Errorf("literal.Value not %d. got=%d", 5, literal.Value)
+	}
+	if literal.TokenLiteral() != "5" { // checking the parsed value of the token
+		t.Errorf("literal.TokenLiteral not %s. got=%s", "5",
+			literal.TokenLiteral())
+	}
+}
+
+func TestParsingPrefixExpressions(t *testing.T) {
+	prefixTests := []struct {
+		input 		 string
+		operator	 string
+		integerValue int64
+	}{
+		{"!5;", "!", 5},
+		{"-15;", "-", 15},
+	}
+
+	for _, tt := range prefixTests {
+		l := lexer.New(tt.input)
+		p := New(l)
+		program := p.ParseProgram() 
+		checkParserErrors(t, p)
+		
+		if len(program.Statements) != 1 { // single statement
+			t.Fatalf("program.Statements does not contain %d statements. got=%d\n",
+				1, len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement) 
+		if !ok { // checking statement is an expression
+			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
+				program.Statements[0])
+		}
+
+		exp, ok := stmt.Expression.(*ast.PrefixExpression) 
+		if !ok { // checking prefix expression
+			t.Fatalf("stmt is not ast.PrefixExpression. got=%T", stmt.Expression)
+		}
+		if exp.Operator != tt.operator { // parsing prefix operator correctly
+			t.Fatalf("exp.Operator is not '%s'. got=%s", 
+				tt.operator, exp.Operator)	
+		}
+		if !testIntegerLiteral(t, exp.Right, tt.integerValue) { 
+			// parsing intlit correctly
+			return
+		}
+	}
+}
+
+func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
+	integ, ok := il.(*ast.IntegerLiteral) // asserting that il is of type intlit
+	if !ok { // incorrect type
+		t.Errorf("il not *ast.IntegerLiteral. got=%T", il)
+		return false
+	}
+
+	if integ.Value != value { // incorrectly parsed value
+		t.Errorf("integ.Value not %d. got=%d", value, integ.Value)
+		return false
+	}
+
+	if integ.TokenLiteral() != fmt.Sprintf("%d", value) { // wrong token repr
+		t.Errorf("integ.TokenLiteral not %d. got=%s", value, 
+			integ.TokenLiteral())
+		return false
+	}
+	
+	return true
 }
 
 func checkParserErrors(t *testing.T, p *Parser) {
