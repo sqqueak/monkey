@@ -17,12 +17,13 @@ func Start(in io.Reader, out io.Writer) {
 		fmt.Printf(PROMPT)
 		scanned := scanner.Scan()
 		if !scanned {
-			return
+			return // scanned nothing => end parsing this line
 		}
 
 		line := scanner.Text()
 		l := lexer.New(line)
 
+		// getting the internal Token representation of input
 		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
 			fmt.Printf("%+v\n", tok)
 		}

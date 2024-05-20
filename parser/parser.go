@@ -46,8 +46,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.nextToken()
 
 	// Initializing prefix-fn map with identifier fctn
-	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
-	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	p.prefixParseFns = make(map[token.TokenType]prefixParseFn) // creates map
+	p.registerPrefix(token.IDENT, p.parseIdentifier) // adds ident parse to it
 
 	return p
 }

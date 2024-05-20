@@ -3,11 +3,11 @@ package token
 type TokenType string
 
 type Token struct {
-	Type TokenType
-	Literal string
+	Type TokenType  // type of token
+	Literal string  // value of token, like "let" or "+" or "else"
 }
 
-const (
+const ( // all of the symbols that can be in a monkey program
 	ILLEGAL = "ILLEGAL"
 	EOF = "EOF"
 
@@ -48,7 +48,7 @@ const (
 	RETURN = "RETURN"
 )
 
-var keywords = map[string]TokenType{
+var keywords = map[string]TokenType{ // maps strings to TokenTypes
 	"fn":  FUNCTION,
 	"let": LET,
 	"true": TRUE,
@@ -59,6 +59,7 @@ var keywords = map[string]TokenType{
 }
 
 func LookupIdent(ident string) TokenType {
+	// if something isn't in the list of symbols, then it must be an identifier
 	if tok, ok := keywords[ident]; ok {
 		return tok
 	}
